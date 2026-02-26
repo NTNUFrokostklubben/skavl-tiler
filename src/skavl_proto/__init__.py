@@ -1,6 +1,10 @@
-from importlib import import_module
 import sys
+import pkgutil
+from importlib import import_module
 
-# Add every *_pb2 module in this folder to current namespace
-for _m in ("progress_pb2",):
-    sys.modules[_m] = import_module(f"{__name__}.{_m}")
+for m in pkgutil.iter_modules(__path__):
+    name = m.name
+    if name.endswith("_pb2") or name.endswith("_pb2_grpc"):
+        mod = import_module(f"{__name__}.{name}")
+        setattr(sys.modules[__name__], name, mod)
+        sys.modules[name] = mod

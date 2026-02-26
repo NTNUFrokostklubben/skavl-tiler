@@ -42,7 +42,7 @@ class TileRef(_message.Message):
     state: TileState
     local_path: str
     is_prefetch: bool
-    def __init__(self, coord: _Optional[_Union[TileCoord, _Mapping]] = ..., state: _Optional[_Union[TileState, str]] = ..., local_path: _Optional[str] = ..., is_prefetch: bool = ...) -> None: ...
+    def __init__(self, coord: _Optional[_Union[TileCoord, _Mapping]] = ..., state: _Optional[_Union[TileState, str]] = ..., local_path: _Optional[str] = ..., is_prefetch: _Optional[bool] = ...) -> None: ...
 
 class ViewportTileManifest(_message.Message):
     __slots__ = ("source_id", "selected_level", "tiles")
@@ -116,7 +116,7 @@ class PlanViewportRequest(_message.Message):
     screen_pixels_per_source_pixel: float
     prefetch_margin_tiles: int
     queue_missing_tiles: bool
-    def __init__(self, source: _Optional[_Union[SourceRef, _Mapping]] = ..., viewport_source_rect_px: _Optional[_Union[RectPx, _Mapping]] = ..., screen_pixels_per_source_pixel: _Optional[float] = ..., prefetch_margin_tiles: _Optional[int] = ..., queue_missing_tiles: bool = ...) -> None: ...
+    def __init__(self, source: _Optional[_Union[SourceRef, _Mapping]] = ..., viewport_source_rect_px: _Optional[_Union[RectPx, _Mapping]] = ..., screen_pixels_per_source_pixel: _Optional[float] = ..., prefetch_margin_tiles: _Optional[int] = ..., queue_missing_tiles: _Optional[bool] = ...) -> None: ...
 
 class PlanViewportResponse(_message.Message):
     __slots__ = ("manifest",)
