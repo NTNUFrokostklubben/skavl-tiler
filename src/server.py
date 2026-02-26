@@ -8,7 +8,7 @@ import grpc
 from skavl_proto import progress_pb2
 from skavl_proto import progress_pb2_grpc
 from skavl_proto import tiler_pb2_grpc
-from services.tiler_servicer import TilerServiceSericer
+from services.tiler_servicer import TileServiceServicer
 
 
 class ProgressService(progress_pb2_grpc.ProgressServiceServicer):
@@ -29,7 +29,7 @@ class ProgressService(progress_pb2_grpc.ProgressServiceServicer):
 def serve():
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=4))
     progress_pb2_grpc.add_ProgressServiceServicer_to_server(ProgressService(), server)
-    tiler_pb2_grpc.add_TilerServiceServicer_to_server(TilerServiceSericer(), server)
+    tiler_pb2_grpc.add_TilerServiceServicer_to_server(TileServiceServicer(), server)
     server.add_insecure_port("0.0.0.0:50051")
     server.start()
     print("gRPC server listening on 0.0.0.0:50051")

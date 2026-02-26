@@ -16,15 +16,17 @@ def _make_source_id(canon_path: str) -> str:
     payload = f"{canon_path}|{st.st_size}|{int(st.st_mtime)}".encode("utf-8")
     return hashlib.sha1(payload).hexdigest()
 
-class TilerServiceSericer(tiler_pb2_grpc.TilerServiceServicer):
+
+class TileServiceServicer(tiler_pb2_grpc.TilerServiceServicer):
+    """gRPC servicer for TilerService."""
+
     def __init__(self) -> None:
         self._sources: dict[str, str] = {}
 
-    """
-    Resolves a source path based on either a source_path in the proto message or a source_id.
-    Returns a tuple of (source_id, canonical_source_path) which can be used by the other methods
-    """
+
     def _resolve_source_path(self, source_ref: tiler_pb2.SourceRef, context) -> tuple[str, str]:
+        """Resolve SourceRef to (source_id, canonical_source_path)."""
+
         active_ref_field = source_ref.WhichOneof("ref")
         if active_ref_field is None:
             context.abort(grpc.StatusCode.INVALID_ARGUMENT, "SourceRef.ref is required")
