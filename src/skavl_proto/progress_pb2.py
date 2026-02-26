@@ -24,7 +24,7 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x0eprogress.proto\x12\x05skavl\"8\n\x0eProgressReport\x12\x14\n\x0cproject_name\x18\x01 \x01(\t\x12\x10\n\x08progress\x18\x02 \x01(\x02\x62\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x0eprogress.proto\x12\x05skavl\"8\n\x0eProgressReport\x12\x14\n\x0cproject_name\x18\x01 \x01(\t\x12\x10\n\x08progress\x18\x02 \x01(\x02\"\x11\n\x0fProgressRequest2Q\n\x0fProgressService\x12>\n\x0bGetProgress\x12\x16.skavl.ProgressRequest\x1a\x15.skavl.ProgressReport\"\x00\x62\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
@@ -33,4 +33,8 @@ if not _descriptor._USE_C_DESCRIPTORS:
   DESCRIPTOR._loaded_options = None
   _globals['_PROGRESSREPORT']._serialized_start=25
   _globals['_PROGRESSREPORT']._serialized_end=81
+  _globals['_PROGRESSREQUEST']._serialized_start=83
+  _globals['_PROGRESSREQUEST']._serialized_end=100
+  _globals['_PROGRESSSERVICE']._serialized_start=102
+  _globals['_PROGRESSSERVICE']._serialized_end=183
 # @@protoc_insertion_point(module_scope)
