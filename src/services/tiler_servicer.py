@@ -21,7 +21,11 @@ class TileServiceServicer(tiler_pb2_grpc.TilerServiceServicer):
     """gRPC servicer for TilerService."""
 
     def __init__(self) -> None:
-        self._sources: dict[str, str] = {}
+        self._source_id_to_path: dict[str, str] = {}
+        self._source_id_to_descriptor: dict[str, tuple[int, int, int]] = {}
+        self._cache_root = r"C:\tilecache"
+        self._tile_w = 512
+        self._tile_h = 512
 
 
     def _resolve_source_path(self, source_ref: tiler_pb2.SourceRef, context) -> tuple[str, str]:
@@ -52,6 +56,7 @@ class TileServiceServicer(tiler_pb2_grpc.TilerServiceServicer):
 
     def DescribeSource(self, request, context):
         source_id, _source_path = self._resolve_source_path(request.source, context)
+        self._source_id_to_descriptor[source_id] = (1000, 1000, 4)
 
         # TODO: replace dummy values with GDAL dataset inspection
         return tiler_pb2.DescribeSourceResponse(
