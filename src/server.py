@@ -4,6 +4,7 @@ import time
 
 
 import grpc
+from osgeo import gdal
 
 from skavl_proto import progress_pb2
 from skavl_proto import progress_pb2_grpc
@@ -19,14 +20,8 @@ class ProgressService(progress_pb2_grpc.ProgressServiceServicer):
             progress=random.random(),
         )
 
-
-
-
-
-
-
-
 def serve():
+    gdal.UseExceptions()
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=4))
     progress_pb2_grpc.add_ProgressServiceServicer_to_server(ProgressService(), server)
     tiler_pb2_grpc.add_TilerServiceServicer_to_server(TileServiceServicer(), server)
