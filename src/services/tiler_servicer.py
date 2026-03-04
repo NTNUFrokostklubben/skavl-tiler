@@ -115,7 +115,9 @@ class TileServiceServicer(tiler_pb2_grpc.TilerServiceServicer):
             prefetch_margin_tiles=int(request.prefetch_margin_tiles),
         )
 
+
         tile_refs = self._plan_to_tile_refs(_canonical_source_path, plan, request, selected_level, source_id)
+
 
         return tiler_pb2.PlanViewportResponse(
             manifest=tiler_pb2.ViewportTileManifest(
@@ -164,7 +166,7 @@ class TileServiceServicer(tiler_pb2_grpc.TilerServiceServicer):
         y_range = range(plan.requested_tiles.y.min_value, plan.requested_tiles.y.max_value + 1)
         x_range = range(plan.requested_tiles.x.min_value, plan.requested_tiles.x.max_value + 1)
 
-        for tile_x, tile_y in itertools.product(y_range, x_range):
+        for tile_y, tile_x in itertools.product(y_range, x_range):
             tile_path = self._build_tile_path(source_id, selected_level, tile_x, tile_y)
             is_in_core = self._is_in_core(plan.core_tiles, tile_x, tile_y)
 
