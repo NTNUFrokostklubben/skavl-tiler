@@ -11,3 +11,7 @@ class ProgressReport(_message.Message):
     project_name: str
     progress: float
     def __init__(self, project_name: _Optional[str] = ..., progress: _Optional[float] = ...) -> None: ...
+
+class ProgressRequest(_message.Message):
+    __slots__ = ()
+    def __init__(self) -> None: ...
