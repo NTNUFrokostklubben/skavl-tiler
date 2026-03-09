@@ -1,11 +1,11 @@
 name: build-test
 
 on:
-  push:
   pull_request:
 
 jobs:
   linux-build:
+    if: ${{ !github.event.pull_request.draft }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -38,6 +38,7 @@ jobs:
           kill $SERVER_PID
 
   windows-build:
+    if: ${{ !github.event.pull_request.draft }}
     runs-on: windows-latest
 
     steps:
