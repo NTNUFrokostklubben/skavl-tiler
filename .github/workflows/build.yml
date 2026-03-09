@@ -17,9 +17,11 @@ jobs:
           auto-update-conda: true
 
       - name: Install conda-lock
+        shell: bash -l {0}
         run: conda install -n base -c conda-forge conda-lock
 
       - name: Create build environment
+        shell: bash -l {0}
         run: conda-lock install --prefix ./env
 
       - name: Install local package
