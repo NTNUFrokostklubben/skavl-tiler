@@ -10,10 +10,8 @@ binaries = collect_dynamic_libs("gdal")
 
 # Linux-specific dependency (required by GDAL stack)
 if sys.platform.startswith("linux"):
-    conda_lib = Path(os.environ["CONDA_PREFIX"]) / "lib"
-    binaries += [
-        (str(conda_lib / "libnsl.so.3"), "."),
-    ]
+    conda_lib = Path(sys.prefix) / "lib"
+    binaries += [(str(conda_lib / "libnsl.so.3"), ".")]
 
 
 a = Analysis(
