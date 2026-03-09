@@ -1,0 +1,88 @@
+name: release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  linux-build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Miniforge
+        uses: conda-incubator/setup-miniconda@v3
+        with:
+          miniforge-version: latest
+          activate-environment: base
+          auto-update-conda: true
+
+      - name: Install conda-lock
+        shell: bash -l {0}
+        run: conda install -n base -c conda-forge conda-lock
+
+      - name: Create build environment
+        shell: bash -l {0}
+        run: conda-lock install --prefix ./env
+
+      - name: Install local package
+        run: ./env/bin/python -m pip install -e .
+
+      - name: Build binary
+        run: ./env/bin/pyinstaller server.spec
+
+      - name: Package artifact
+        run: |
+          tar -czf server-linux.tar.gz -C dist server
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: server-linux
+          path: server-linux.tar.gz
+
+      - name: Upload release asset
+        uses: softprops/action-gh-release@v2
+        with:
+          files: server-linux.tar.gz
+
+  windows-build:
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Miniforge
+        uses: conda-incubator/setup-miniconda@v3
+        with:
+          miniforge-version: latest
+          activate-environment: base
+          auto-update-conda: true
+
+      - name: Install conda-lock
+        run: conda install -n base -c conda-forge conda-lock
+
+      - name: Create build environment
+        run: conda-lock install --prefix ./env
+
+      - name: Install local package
+        run: ./env/python -m pip install -e .
+
+      - name: Build binary
+        run: ./env/Scripts/pyinstaller server.spec
+
+      - name: Package artifact
+        run: Compress-Archive -Path dist/server -DestinationPath server-windows.zip
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: server-windows
+          path: server-windows.zip
+
+      - name: Upload release asset
+        uses: softprops/action-gh-release@v2
+        with:
+          files: server-windows.zip
