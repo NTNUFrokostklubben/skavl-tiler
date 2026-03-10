@@ -35,7 +35,7 @@ exe = EXE(
     a.scripts,
     [],
     exclude_binaries=True,
-    name="server",
+    name="skavl-tiler",
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,
@@ -47,6 +47,7 @@ exe = EXE(
     codesign_identity=None,
     entitlements_file=None,
     contents_directory=".",
+    icon=str(Path("res") / "tiler-icon.ico")
 )
 
 coll = COLLECT(

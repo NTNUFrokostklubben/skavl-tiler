@@ -37,7 +37,7 @@ jobs:
 
       - name: Run server startup test
         run: |
-          ./dist/server/server &
+          ./dist/server/skavl-tiler &
           SERVER_PID=$!
           sleep 6
           kill $SERVER_PID
@@ -70,6 +70,6 @@ jobs:
 
       - name: Run server startup test
         run: |
-          $p = Start-Process dist/server/server.exe -PassThru
+          $p = Start-Process dist/server/skavl-tiler.exe -PassThru
           Start-Sleep -Seconds 6
           Stop-Process $p
