@@ -10,10 +10,8 @@ binaries = collect_dynamic_libs("gdal")
 
 # Linux-specific dependency (required by GDAL stack)
 if sys.platform.startswith("linux"):
-    conda_lib = Path(os.environ["CONDA_PREFIX"]) / "lib"
-    binaries += [
-        (str(conda_lib / "libnsl.so.3"), "."),
-    ]
+    conda_lib = Path(sys.prefix) / "lib"
+    binaries += [(str(conda_lib / "libnsl.so.3"), ".")]
 
 
 a = Analysis(
@@ -37,7 +35,7 @@ exe = EXE(
     a.scripts,
     [],
     exclude_binaries=True,
-    name="server",
+    name="skavl-tiler",
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,
@@ -49,6 +47,7 @@ exe = EXE(
     codesign_identity=None,
     entitlements_file=None,
     contents_directory=".",
+    icon=str(Path("res") / "tiler-icon.ico")
 )
 
 coll = COLLECT(

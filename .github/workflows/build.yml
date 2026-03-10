@@ -1,0 +1,75 @@
+name: build-test
+
+on:
+  pull_request:
+    types:
+      - opened
+      - synchronize
+      - reopened
+      - ready_for_review
+
+jobs:
+  linux-build:
+    if: ${{ !github.event.pull_request.draft }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Miniforge
+        uses: conda-incubator/setup-miniconda@v3
+        with:
+          miniforge-version: latest
+          activate-environment: base
+          auto-update-conda: true
+
+      - name: Install conda-lock
+        shell: bash -l {0}
+        run: conda install -n base -c conda-forge conda-lock
+
+      - name: Create build environment
+        shell: bash -l {0}
+        run: conda-lock install --prefix ./env
+
+      - name: Install local package
+        run: ./env/bin/python -m pip install -e .
+
+      - name: Build binary
+        run: ./env/bin/pyinstaller server.spec
+
+      - name: Run server startup test
+        run: |
+          ./dist/server/skavl-tiler &
+          SERVER_PID=$!
+          sleep 6
+          kill $SERVER_PID
+
+  windows-build:
+    if: ${{ !github.event.pull_request.draft }}
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Miniforge
+        uses: conda-incubator/setup-miniconda@v3
+        with:
+          miniforge-version: latest
+          activate-environment: base
+          auto-update-conda: true
+
+      - name: Install conda-lock
+        run: conda install -n base -c conda-forge conda-lock
+
+      - name: Create build environment
+        run: conda-lock install --prefix ./env
+
+      - name: Install local package
+        run: ./env/python -m pip install -e .
+
+      - name: Build binary
+        run: ./env/Scripts/pyinstaller server.spec
+
+      - name: Run server startup test
+        run: |
+          $p = Start-Process dist/server/skavl-tiler.exe -PassThru
+          Start-Sleep -Seconds 6
+          Stop-Process $p
