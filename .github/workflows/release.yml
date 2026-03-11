@@ -35,18 +35,13 @@ jobs:
 
       - name: Package artifact
         run: |
-          tar -czf server-linux.tar.gz -C dist server
+          tar -czf server-${GITHUB_REF_NAME}-linux.tar.gz -C dist server
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: server-linux
-          path: server-linux.tar.gz
-
-      - name: Upload release asset
-        uses: softprops/action-gh-release@v2
-        with:
-          files: server-linux.tar.gz
+          path: server-${{ github.ref_name }}-linux.tar.gz
 
   windows-build:
     runs-on: windows-latest
@@ -74,15 +69,36 @@ jobs:
         run: ./env/Scripts/pyinstaller server.spec
 
       - name: Package artifact
-        run: Compress-Archive -Path dist/server -DestinationPath server-windows.zip
+        run: Compress-Archive -Path dist/server -DestinationPath server-${env:GITHUB_REF_NAME}-windows.zip
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: server-windows
-          path: server-windows.zip
+          path: server-${{ github.ref_name }}-windows.zip
 
-      - name: Upload release asset
+  publish-release:
+    runs-on: ubuntu-latest
+    needs:
+      - linux-build
+      - windows-build
+    permissions:
+      contents: write
+
+    steps:
+      - name: Download Linux artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: server-linux
+
+      - name: Download Windows artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: server-windows
+
+      - name: Upload release assets
         uses: softprops/action-gh-release@v2
         with:
-          files: server-windows.zip
+          files: |
+            server-${{ github.ref_name }}-linux.tar.gz
+            server-${{ github.ref_name }}-windows.zip
