@@ -74,7 +74,7 @@ class TileServiceServicer(tiler_pb2_grpc.TilerServiceServicer):
     def __init__(self) -> None:
         self._source_id_to_path: dict[str, str] = {}
         self._source_id_to_descriptor: dict[str, tuple[int, int, int]] = {}
-        self._cache_root = r"C:\tilecache"
+        self._cache_root = Path.cwd() / "tilecache"
         self._tile_w = 512
         self._tile_h = 512
 
