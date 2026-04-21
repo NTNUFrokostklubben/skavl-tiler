@@ -23,3 +23,5 @@ build/
 # Secrets and credentials (example names)
 secrets.toml
 .env.local
+
+tilecache
