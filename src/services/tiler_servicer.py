@@ -1,6 +1,7 @@
 import hashlib
 import itertools
 import os
+import pathlib
 from pathlib import Path
 
 import grpc
@@ -24,18 +25,17 @@ def _canonicalize_path(p: str) -> str:
 
 
 def _make_source_id(canonical_path: str) -> str:
-    """Creates unique id based on file path, size, and mtime.
+    """Uses the filename as ID for tiling, could cause issues if files are changed,
+    but is needed for cross-reference.
     Used primarily with generating unique id per loaded GeoTIFF
 
     Args:
         canonical_path (str): Canonical path to file
 
     Returns:
-        Unique id
+        Filename as id
     """
-    st = os.stat(canonical_path)
-    payload = f"{canonical_path}|{st.st_size}|{int(st.st_mtime)}".encode("utf-8")
-    return hashlib.sha1(payload).hexdigest()
+    return Path(canonical_path).name
 
 
 def _inspect_descriptor_gdal(source_path: str) -> tuple[int, int, int]:
