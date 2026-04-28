@@ -52,6 +52,15 @@ conda-lock -f environment.yaml -p win-64 -p linux-64
 When install the new lock-file has been created, verify that a new environment can be created from it using conda-lock install.
 Also check that the project builds and that it runs.
 
+## Documentation
+
+Documentation for the latest main branch release will be available on gh-pages. For generating local docs, use the pdoc package using the command.
+```
+pdoc src/ !src.skavl_proto -o docs/_build
+```
+https://ntnufrokostklubben.github.io/skavl-tiler/
+
+
 ## License
 Open-source: AGPL-3.0 (see LICENSE)
 Commercial: available on inquiry (see COMMERCIAL.md)
