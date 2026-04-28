@@ -25,3 +25,6 @@ secrets.toml
 .env.local
 
 tilecache
+
+# Docs
+docs/
