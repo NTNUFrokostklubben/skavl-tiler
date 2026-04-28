@@ -10,3 +10,5 @@ dependencies:
   - pillow
   - pyinstaller
   - conda-lock
+  - pdoc
+  - pip
