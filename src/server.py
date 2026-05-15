@@ -1,17 +1,18 @@
 import argparse
 from concurrent import futures
+from pathlib import Path
 import random
-import time
 
 
 import grpc
 from osgeo import gdal
 
 from services.shutdown_servicer.shutdown_servicer import ShutdownServicer
+from services.tiler_servicer.TilerService import TilerService
+from services.tiler_servicer.tiler_servicer import TileServiceServicer
 from skavl_proto import progress_pb2, shutdown_pb2_grpc
 from skavl_proto import progress_pb2_grpc
 from skavl_proto import tiler_pb2_grpc
-from services.tiler_servicer.tiler_servicer import TileServiceServicer
 
 
 class ProgressService(progress_pb2_grpc.ProgressServiceServicer):
@@ -37,8 +38,9 @@ def serve():
 
     gdal.UseExceptions()
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=4))
+    tiler_service = TilerService(cache_root=Path.cwd() / "tilecache")
     progress_pb2_grpc.add_ProgressServiceServicer_to_server(ProgressService(), server)
-    tiler_pb2_grpc.add_TilerServiceServicer_to_server(TileServiceServicer(), server)
+    tiler_pb2_grpc.add_TilerServiceServicer_to_server(TileServiceServicer(tiler_service), server)
     shutdown_pb2_grpc.add_ShutdownServiceServicer_to_server(ShutdownServicer(server), server)
 
     # Accepts connections only locally when running locally.
