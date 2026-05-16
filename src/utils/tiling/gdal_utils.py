@@ -6,6 +6,46 @@ from PIL import Image
 from typing_extensions import deprecated
 
 
+def inspect_source(source_path: str) -> tuple[int, int, int]:
+    """Return (width_px, height_px, max_level) for a GeoTIFF at level 0."""
+    ds = gdal.OpenEx(source_path, gdal.GA_ReadOnly)
+    if ds is None:
+        raise RuntimeError(f"GDAL open failed: {source_path}")
+    try:
+        width0 = int(ds.RasterXSize)
+        height0 = int(ds.RasterYSize)
+        band1 = ds.GetRasterBand(1)
+        if band1 is None:
+            raise RuntimeError("Dataset has no band 1")
+        max_level = int(band1.GetOverviewCount())
+        return width0, height0, max_level
+    finally:
+        ds = None
+
+
+def read_tile_array(bands: list, tile_x: int, tile_y: int, tile_w: int, tile_h: int) -> np.ndarray:
+    """Read tile pixel data from GDAL bands into a (bands, H, W) uint8 array."""
+    x_offset = tile_x * tile_w
+    y_offset = tile_y * tile_h
+
+    level_w = int(bands[0].XSize)
+    level_h = int(bands[0].YSize)
+
+    read_w = max(0, min(tile_w, level_w - x_offset))
+    read_h = max(0, min(tile_h, level_h - y_offset))
+    if read_w == 0 or read_h == 0:
+        raise RuntimeError("Tile window outside dataset bounds at this level")
+
+    stacked = np.zeros((len(bands), tile_h, tile_w), dtype=np.uint8)
+    for i, band in enumerate(bands):
+        arr = band.ReadAsArray(x_offset, y_offset, read_w, read_h)
+        if arr is None:
+            raise RuntimeError("ReadAsArray returned None")
+        stacked[i, :read_h, :read_w] = arr.astype(np.uint8, copy=False)
+
+    return stacked
+
+
 def extract_bands(data_source, selected_level: int) -> list:
     """Extract all bands from a GeoTIFF.
 
