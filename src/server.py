@@ -38,10 +38,11 @@ def serve():
 
     gdal.UseExceptions()
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=4))
-    tiler_service = TilerService(cache_root=Path.cwd() / "tilecache")
+    cache_root=Path.cwd() / "tilecache"
+    tiler_service = TilerService(cache_root=cache_root)
     progress_pb2_grpc.add_ProgressServiceServicer_to_server(ProgressService(), server)
     tiler_pb2_grpc.add_TilerServiceServicer_to_server(TileServiceServicer(tiler_service), server)
-    shutdown_pb2_grpc.add_ShutdownServiceServicer_to_server(ShutdownServicer(server), server)
+    shutdown_pb2_grpc.add_ShutdownServiceServicer_to_server(ShutdownServicer(server, cache_root), server)
 
     # Accepts connections only locally when running locally.
     server_port = getattr(args, "port")
